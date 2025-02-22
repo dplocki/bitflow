@@ -42,6 +42,13 @@ func connectedToServer() {
 	fmt.Print("Server response: ", string(buffer[:n]))
 }
 
+type Person struct {
+	Host     string   `json:"host"`
+	Port     int      `json:"port"`
+	Email    string   `json:"email"`
+	Messages []string `json:"messages"`
+}
+
 func main() {
 	// Open JSON file
 	file, err := os.Open("config.json")
