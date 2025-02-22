@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
-	"io/ioutil"
 	"os"
 )
 
@@ -49,26 +48,28 @@ type Configuration struct {
 	Messages []string `json:"messages"`
 }
 
+func loadConfiguration(filename string) (Configuration, error) {
+	var configuration Configuration
+
+	bytes, err := os.ReadFile(filename)
+	if err != nil {
+		return configuration, err
+	}
+
+	err = json.Unmarshal(bytes, &configuration)
+	if err != nil {
+		return configuration, err
+	}
+
+	return configuration, nil
+}
+
 func main() {
-	file, err := os.Open("config.json")
+	configuration, err := loadConfiguration("config.json")
 	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return
-	}
-	defer file.Close()
-
-	bytes, err := ioutil.ReadAll(file)
-	if err != nil {
-		fmt.Println("Error reading file:", err)
+		fmt.Println("Error loading configuration:", err)
 		return
 	}
 
-	var config Configuration
-	err = json.Unmarshal(bytes, &config)
-	if err != nil {
-		fmt.Println("Error parsing JSON:", err)
-		return
-	}
-
-	fmt.Println("Loaded JSON:", config)
+	fmt.Println(configuration)
 }
