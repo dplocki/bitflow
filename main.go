@@ -14,12 +14,19 @@ func connectedToServer(host string, port int, messages []string) error {
 	}
 	defer conn.Close()
 
-	fmt.Println("Connected to server.")
-	for _, message := range messages {
+	fmt.Print("Connected to server ")
+	fmt.Print(host)
+	fmt.Print(":")
+	fmt.Println(port)
+
+	for index, message := range messages {
 		bytes, err := hex.DecodeString(message)
 		if err != nil {
 			return err
 		}
+
+		fmt.Print(index)
+		hex.Dump(bytes)
 
 		_, err = conn.Write(bytes)
 		if err != nil {
@@ -32,7 +39,9 @@ func connectedToServer(host string, port int, messages []string) error {
 			return err
 		}
 
-		fmt.Print("Server response: ", string(buffer[:n]))
+		fmt.Println()
+		fmt.Println("Server response:")
+		hex.Dump(buffer[:n])
 	}
 
 	return nil
