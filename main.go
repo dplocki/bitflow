@@ -42,7 +42,7 @@ func connectedToServer() {
 	fmt.Print("Server response: ", string(buffer[:n]))
 }
 
-type Person struct {
+type Configuration struct {
 	Host     string   `json:"host"`
 	Port     int      `json:"port"`
 	Email    string   `json:"email"`
@@ -50,7 +50,6 @@ type Person struct {
 }
 
 func main() {
-	// Open JSON file
 	file, err := os.Open("config.json")
 	if err != nil {
 		fmt.Println("Error opening file:", err)
@@ -58,21 +57,18 @@ func main() {
 	}
 	defer file.Close()
 
-	// Read file content
 	bytes, err := ioutil.ReadAll(file)
 	if err != nil {
 		fmt.Println("Error reading file:", err)
 		return
 	}
 
-	// Parse JSON into a generic map
-	var data map[string]interface{}
-	err = json.Unmarshal(bytes, &data)
+	var config Configuration
+	err = json.Unmarshal(bytes, &config)
 	if err != nil {
 		fmt.Println("Error parsing JSON:", err)
 		return
 	}
 
-	// Print the data
-	fmt.Println("Loaded JSON:", data)
+	fmt.Println("Loaded JSON:", config)
 }
