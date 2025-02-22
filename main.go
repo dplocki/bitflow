@@ -25,8 +25,9 @@ func connectedToServer(host string, port int, messages []string) error {
 			return err
 		}
 
-		fmt.Print(index)
-		hex.Dump(bytes)
+		fmt.Print("Message #")
+		fmt.Println(index)
+		fmt.Println(hex.Dump(bytes))
 
 		_, err = conn.Write(bytes)
 		if err != nil {
@@ -39,9 +40,8 @@ func connectedToServer(host string, port int, messages []string) error {
 			return err
 		}
 
-		fmt.Println()
 		fmt.Println("Server response:")
-		hex.Dump(buffer[:n])
+		fmt.Println(hex.Dump(buffer[:n]))
 	}
 
 	return nil
