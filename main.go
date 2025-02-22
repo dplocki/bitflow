@@ -2,11 +2,14 @@ package main
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"net"
+	"io/ioutil"
+	"os"
 )
 
-func main() {
+func connectedToServer() {
 	conn, err := net.Dial("tcp", "localhost:9092")
 	if err != nil {
 		fmt.Println("Error connecting to server:", err)
@@ -37,4 +40,32 @@ func main() {
 	}
 
 	fmt.Print("Server response: ", string(buffer[:n]))
+}
+
+func main() {
+	// Open JSON file
+	file, err := os.Open("config.json")
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer file.Close()
+
+	// Read file content
+	bytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		fmt.Println("Error reading file:", err)
+		return
+	}
+
+	// Parse JSON into a generic map
+	var data map[string]interface{}
+	err = json.Unmarshal(bytes, &data)
+	if err != nil {
+		fmt.Println("Error parsing JSON:", err)
+		return
+	}
+
+	// Print the data
+	fmt.Println("Loaded JSON:", data)
 }
