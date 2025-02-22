@@ -6,7 +6,7 @@ import (
 	"net"
 )
 
-func connectedToServer(host string, port int) error {
+func connectedToServer(host string, port int, messages []string) error {
 	address := fmt.Sprintf("%s:%d", host, port)
 	conn, err := net.Dial("tcp", address)
 	if err != nil {
@@ -15,35 +15,39 @@ func connectedToServer(host string, port int) error {
 	defer conn.Close()
 
 	fmt.Println("Connected to server.")
+	for _, message := range messages {
+		bytes, err := hex.DecodeString(message)
+		if err != nil {
+			return err
+		}
 
-	hexString := "000000230012674a4f74d28b00096b61666b612d636c69000a6b61666b612d636c6904302e3100"
-	message, err := hex.DecodeString(hexString)
-	if err != nil {
-		return err
+		_, err = conn.Write(bytes)
+		if err != nil {
+			return err
+		}
+
+		buffer := make([]byte, 1024)
+		n, err := conn.Read(buffer)
+		if err != nil {
+			return err
+		}
+
+		fmt.Print("Server response: ", string(buffer[:n]))
 	}
 
-	_, err = conn.Write(message)
-	if err != nil {
-		return err
-	}
-
-	buffer := make([]byte, 1024)
-	n, err := conn.Read(buffer)
-	if err != nil {
-		return err
-	}
-
-	fmt.Print("Server response: ", string(buffer[:n]))
 	return nil
 }
 
 func main() {
 	configuration, err := LoadConfiguration("config.json")
 	if err != nil {
+		fmt.Errorf("Error during the loading configuration: %w", err)
 		return
 	}
 
-	connectedToServer(configuration.Host, configuration.Port)
-
-	fmt.Println(configuration)
+	connectedToServer(configuration.Host, configuration.Port, configuration.Messages)
+	if err != nil {
+		fmt.Errorf("Error during the server connection: %w", err)
+		return
+	}
 }
