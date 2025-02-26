@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/json"
+	"github.com/hjson/hjson-go/v4"
 	"os"
 )
 
@@ -20,7 +20,7 @@ func LoadConfiguration(filename string) (Configuration, error) {
 		return configuration, err
 	}
 
-	err = json.Unmarshal(bytes, &configuration)
+	err = hjson.Unmarshal(bytes, &configuration)
 	if err != nil {
 		return configuration, err
 	}
