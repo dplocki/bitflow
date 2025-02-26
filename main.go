@@ -48,7 +48,7 @@ func connectedToServer(host string, port int, messages []string) error {
 }
 
 func main() {
-	configuration, err := LoadConfiguration("config.json")
+	configuration, err := LoadConfiguration("config.hjson")
 	if err != nil {
 		fmt.Errorf("Error during the loading configuration: %w", err)
 		return
