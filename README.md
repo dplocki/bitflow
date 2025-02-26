@@ -23,4 +23,4 @@ go build -o main *.go
 
 ## Run
 
-The program loads the configuration (`config.json`). It connects into provided server (the `host` and the `port`) and all the `messages`, one by one.
+The program loads the configuration (`config.hjson`). It connects into provided server (the `host` and the `port`) and all the `messages`, one by one.
