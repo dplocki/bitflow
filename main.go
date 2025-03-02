@@ -42,18 +42,6 @@ func connectedToServer(host string, port int, messages [][]byte) error {
 	return nil
 }
 
-func parsingMessages(messages []string) ([][]byte, error) {
-    result := make([][]byte, len(messages))
-    for index, message := range messages {
-        bytes, err := hex.DecodeString(message)
-        if err != nil {
-            return nil, err
-        }
-        result[index] = bytes
-    }
-    return result, nil
-}
-
 func main() {
 	configuration, err := LoadConfiguration("config.hjson")
 	if err != nil {
@@ -61,7 +49,7 @@ func main() {
 		return
 	}
 
-	messages, err := parsingMessages(configuration.Messages)
+	messages, err := ParsingMessages(configuration.Messages)
 	if err != nil {
 		fmt.Errorf("Error during the parsing messages: %w", err)
 		return
