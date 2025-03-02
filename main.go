@@ -6,7 +6,7 @@ import (
 	"net"
 )
 
-func connectedToServer(host string, port int, messages []string) error {
+func connectedToServer(host string, port int, messages [][]byte) error {
 	address := fmt.Sprintf("%s:%d", host, port)
 	conn, err := net.Dial("tcp", address)
 	if err != nil {
@@ -20,16 +20,11 @@ func connectedToServer(host string, port int, messages []string) error {
 	fmt.Println(port)
 
 	for index, message := range messages {
-		bytes, err := hex.DecodeString(message)
-		if err != nil {
-			return err
-		}
-
 		fmt.Print("Message #")
 		fmt.Println(index)
-		fmt.Println(hex.Dump(bytes))
+		fmt.Println(hex.Dump(message))
 
-		_, err = conn.Write(bytes)
+		_, err = conn.Write(message)
 		if err != nil {
 			return err
 		}
@@ -47,6 +42,18 @@ func connectedToServer(host string, port int, messages []string) error {
 	return nil
 }
 
+func parsingMessages(messages []string) ([][]byte, error) {
+    result := make([][]byte, len(messages))
+    for index, message := range messages {
+        bytes, err := hex.DecodeString(message)
+        if err != nil {
+            return nil, err
+        }
+        result[index] = bytes
+    }
+    return result, nil
+}
+
 func main() {
 	configuration, err := LoadConfiguration("config.hjson")
 	if err != nil {
@@ -54,7 +61,13 @@ func main() {
 		return
 	}
 
-	connectedToServer(configuration.Host, configuration.Port, configuration.Messages)
+	messages, err := parsingMessages(configuration.Messages)
+	if err != nil {
+		fmt.Errorf("Error during the parsing messages: %w", err)
+		return
+	}
+
+	connectedToServer(configuration.Host, configuration.Port, messages)
 	if err != nil {
 		fmt.Errorf("Error during the server connection: %w", err)
 		return
